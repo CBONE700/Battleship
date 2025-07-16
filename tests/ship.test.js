@@ -1,11 +1,15 @@
 import { Ship } from '../src/ship.js';
+const ship = new Ship('Cruiser', 3);
 
 test('Ship is instantiated properly', () => {
-  const ship = new Ship(3);
   expect(ship).toBeInstanceOf(Ship);
   expect(ship.length).toBe(3);
   expect(ship.hits).toBe(0);
   expect(ship.sunk).toBe(false);
+  expect(ship.placed).toBe(false);
+});
+
+test('Ship.hit and Ship.isSunk are working', () => {
   ship.hit();
   ship.hit();
   ship.isSunk();
