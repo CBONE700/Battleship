@@ -1,0 +1,40 @@
+#boards {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+}
+
+#gameboard {
+  justify-self: center;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 0.5px;
+  height: 440px;
+  width: 440px;
+}
+
+#gameboard > * {
+  border: 1px solid black;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+#hitboard {
+  justify-self: center;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 0.5px;
+  height: 440px;
+  width: 440px;
+}
+
+#hitboard > * {
+  border: 1px solid black;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}

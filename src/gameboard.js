@@ -43,19 +43,7 @@ export class Gameboard {
     //Check if ship already placed
     if (ship.placed === false) {
       //Check direction
-      if (direction === 'left') {
-        if (x - ship.length + 1 < 0) {
-          return;
-        }
-        for (let i = 0; i < ship.length; i++) {
-          //Check if there is a ship already on the board space
-          if (this.board[y][x - i] !== 0) {
-            return;
-          }
-          //Place the ship
-          this.board[y][x - i] = ship.name;
-        }
-      } else if (direction === 'right') {
+      if (direction === 'x') {
         if (x + ship.length > 10) {
           return;
         }
@@ -65,17 +53,7 @@ export class Gameboard {
           }
           this.board[y][x + i] = ship.name;
         }
-      } else if (direction === 'up') {
-        if (y - ship.length + 1 < 0) {
-          return;
-        }
-        for (let i = 0; i < ship.length; i++) {
-          if (this.board[y - i][x] !== 0) {
-            return;
-          }
-          this.board[y - i][x] = ship.name;
-        }
-      } else if (direction === 'down') {
+      } else if (direction === 'y') {
         if (y + ship.length > 10) {
           return;
         }
