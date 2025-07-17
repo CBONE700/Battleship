@@ -56,7 +56,7 @@ export default [
       indent: ['error', 2],
       'no-undef': 'error',
       'no-unused-vars': 'warn',
-      'comma-dangle': ['error', 'always-multiline'],
+      'comma-dangle': ['error', 'only-multiline'],
     },
   },
 ];

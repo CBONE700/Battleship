@@ -23,13 +23,48 @@ const playerBoard = document.getElementById('gameboard');
 const computerBoard = document.getElementById('hitboard');
 for (let y = 0; y < player.gameboard.board.length; y++) {
   for (let x = 0; x < player.gameboard.board[y].length; x++) {
+    //Display the ships on players side
     if (player.gameboard.board[y][x] !== 0) {
       const cell = playerBoard.querySelector(`#game${y}${x}`);
       cell.style.backgroundColor = 'black';
     }
+    //Display the ships on computers side (TO BE REMOVED!!)
     if (computer.gameboard.board[y][x] !== 0) {
       const cell = computerBoard.querySelector(`#hit${y}${x}`);
       cell.style.backgroundColor = 'black';
     }
+    //Add and event listener to the computers cells that kicks off a turn
+    computerBoard
+      .querySelector(`#hit${y}${x}`)
+      .addEventListener('click', (e) => {
+        if (
+          //Only continue the action if the cell hasn't already been hit, or if the game isn't over
+          e.target.style.backgroundColor !== 'red' &&
+          computer.gameboard.allSunk !== true &&
+          player.gameboard.allSunk !== true
+        ) {
+          //Set the selected cells background to red and call the receive attack and check if sunk to register the attack and check if game over
+          e.target.style.backgroundColor = 'red';
+          computer.gameboard.receiveAttack(y, x);
+          computer.gameboard.checkIfSunk();
+          //Randomly select a square for the computer to attack and ensure it hasn't already been attacked and repeat above sequence
+          let success = false;
+          while (success !== true) {
+            const playerY = Math.floor(Math.random() * 10);
+            const playerX = Math.floor(Math.random() * 10);
+            if (
+              playerBoard.querySelector(`#game${playerY}${playerX}`).style
+                .backgroundColor !== 'red'
+            ) {
+              playerBoard.querySelector(
+                `#game${playerY}${playerX}`
+              ).style.backgroundColor = 'red';
+              player.gameboard.receiveAttack(playerY, playerX);
+              player.gameboard.checkIfSunk();
+              success = true;
+            }
+          }
+        }
+      });
   }
 }

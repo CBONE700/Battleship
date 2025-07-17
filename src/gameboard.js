@@ -81,6 +81,8 @@ export class Gameboard {
           //increase the hitcount
           if (item.name === this.board[y][x]) {
             item.hit();
+            //check if the ship is sunk
+            item.isSunk();
           }
         }
       }
