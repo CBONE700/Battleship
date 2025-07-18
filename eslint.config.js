@@ -1,15 +1,14 @@
 import js from '@eslint/js';
 import jest from 'eslint-plugin-jest';
+import globals from 'globals';
 
 export default [
   js.configs.recommended,
 
-  // Ignore compiled files
   {
     ignores: ['dist/**'],
   },
 
-  // Webpack config (Node environment)
   {
     files: ['webpack.config.js'],
     languageOptions: {
@@ -17,11 +16,11 @@ export default [
         require: 'readonly',
         module: 'readonly',
         __dirname: 'readonly',
+        ...globals.node,
       },
     },
   },
 
-  // Test files (Jest)
   {
     files: ['tests/**/*.js', '**/*.test.js'],
     plugins: {
@@ -29,11 +28,7 @@ export default [
     },
     languageOptions: {
       globals: {
-        test: 'readonly',
-        expect: 'readonly',
-        describe: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
+        ...globals.jest,
       },
     },
     rules: {
@@ -41,14 +36,11 @@ export default [
     },
   },
 
-  // Default JS files
   {
     files: ['**/*.js'],
     languageOptions: {
       globals: {
-        window: 'readonly',
-        document: 'readonly',
-        console: 'readonly',
+        ...globals.browser, // ✅ FIX: includes `alert`, `window`, `document`, etc.
       },
     },
     rules: {

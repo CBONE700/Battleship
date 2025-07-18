@@ -18,20 +18,32 @@ computer.gameboard.placeShip(7, 7, 'y', computer.gameboard.ships[2]);
 computer.gameboard.placeShip(2, 9, 'y', computer.gameboard.ships[3]);
 computer.gameboard.placeShip(0, 0, 'x', computer.gameboard.ships[4]);
 
-//Populate the DOM with ship positions
-const playerBoard = document.getElementById('gameboard');
-const computerBoard = document.getElementById('hitboard');
+//Create the boards and populate them with ship coordinates
+const boards = document.createElement('div');
+boards.id = 'boards';
+document.body.appendChild(boards);
+const playerBoard = document.createElement('div');
+const computerBoard = document.createElement('div');
+playerBoard.id = 'gameboard';
+computerBoard.id = 'hitboard';
+boards.appendChild(playerBoard);
+boards.appendChild(computerBoard);
+
 for (let y = 0; y < player.gameboard.board.length; y++) {
   for (let x = 0; x < player.gameboard.board[y].length; x++) {
+    const playerCell = document.createElement('div');
+    playerCell.id = `game${y}${x}`;
+    playerBoard.appendChild(playerCell);
+    const computerCell = document.createElement('div');
+    computerCell.id = `hit${y}${x}`;
+    computerBoard.appendChild(computerCell);
     //Display the ships on players side
     if (player.gameboard.board[y][x] !== 0) {
-      const cell = playerBoard.querySelector(`#game${y}${x}`);
-      cell.style.backgroundColor = 'black';
+      playerCell.style.backgroundColor = 'black';
     }
     //Display the ships on computers side (TO BE REMOVED!!)
     if (computer.gameboard.board[y][x] !== 0) {
-      const cell = computerBoard.querySelector(`#hit${y}${x}`);
-      cell.style.backgroundColor = 'black';
+      computerCell.style.backgroundColor = 'black';
     }
     //Add and event listener to the computers cells that kicks off a turn
     computerBoard
@@ -63,6 +75,22 @@ for (let y = 0; y < player.gameboard.board.length; y++) {
               player.gameboard.checkIfSunk();
               success = true;
             }
+          }
+          if (computer.gameboard.allSunk === true) {
+            const body = document.querySelector('body');
+            body.removeChild(body.firstElementChild);
+            const winnerText = document.createElement('div');
+            winnerText.style.fontSize = '40px';
+            winnerText.textContent = 'Player Wins!';
+            body.appendChild(winnerText);
+          }
+          if (player.gameboard.allSunk === true) {
+            const body = document.querySelector('body');
+            body.removeChild(body.firstElementChild);
+            const winnerText = document.createElement('div');
+            winnerText.style.fontSize = '40px';
+            winnerText.textContent = 'Computer Wins!';
+            body.appendChild(winnerText);
           }
         }
       });
