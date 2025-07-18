@@ -1,8 +1,8 @@
 import { Gameboard } from './gameboard.js';
 
 export class Player {
-  constructor(comp) {
+  constructor(name) {
     this.gameboard = new Gameboard();
-    this.comp = comp;
+    this.name = name;
   }
 }

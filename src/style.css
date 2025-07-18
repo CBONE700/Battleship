@@ -5,6 +5,13 @@ body {
   gap: 40px;
 }
 
+#home {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
 #boards {
   display: flex;
   align-items: center;
