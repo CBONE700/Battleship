@@ -1,22 +1,8 @@
 import { Player } from './player.js';
 import './style.css';
 
-const player = new Player('Player');
-const computer = new Player('Computer');
-
-//Populate player gameboard with ship positions
-player.gameboard.placeShip(3, 2, 'x', player.gameboard.ships[0]);
-player.gameboard.placeShip(5, 2, 'x', player.gameboard.ships[1]);
-player.gameboard.placeShip(7, 7, 'y', player.gameboard.ships[2]);
-player.gameboard.placeShip(2, 9, 'y', player.gameboard.ships[3]);
-player.gameboard.placeShip(0, 0, 'x', player.gameboard.ships[4]);
-
-//Populate computer gameboard with ship positions
-computer.gameboard.placeShip(4, 4, 'x', computer.gameboard.ships[0]);
-computer.gameboard.placeShip(5, 6, 'x', computer.gameboard.ships[1]);
-computer.gameboard.placeShip(7, 7, 'y', computer.gameboard.ships[2]);
-computer.gameboard.placeShip(2, 9, 'y', computer.gameboard.ships[3]);
-computer.gameboard.placeShip(0, 0, 'x', computer.gameboard.ships[4]);
+let player = new Player('Player');
+let computer = new Player('Computer');
 
 //Create home screen that allows you to create a name for the player and then start the game
 const title = document.createElement('div');
@@ -41,89 +27,157 @@ home.appendChild(name);
 home.appendChild(homeBtn);
 document.body.appendChild(home);
 
-//On button click, update players name and render the gameboards
 homeBtn.addEventListener('click', () => {
-  console.log(name.value);
-  player.name = name.value;
-  const boards = document.createElement('div');
-  boards.id = 'boards';
-  //document.body.appendChild(boards);
-  const playerBoard = document.createElement('div');
-  const computerBoard = document.createElement('div');
-  playerBoard.id = 'gameboard';
-  computerBoard.id = 'hitboard';
-  boards.appendChild(playerBoard);
-  boards.appendChild(computerBoard);
-  document.body.removeChild(home);
-  document.body.appendChild(boards);
-
+  const placeScreen = document.createElement('div');
+  placeScreen.id = 'placeScreen';
+  document.body.appendChild(placeScreen);
+  player = new Player(name.value);
+  computer = new Player('Computer');
+  //To be randomised
+  computer.gameboard.placeShip(4, 4, 'x', computer.gameboard.ships[0]);
+  computer.gameboard.placeShip(5, 6, 'x', computer.gameboard.ships[1]);
+  computer.gameboard.placeShip(7, 7, 'y', computer.gameboard.ships[2]);
+  computer.gameboard.placeShip(2, 9, 'y', computer.gameboard.ships[3]);
+  computer.gameboard.placeShip(0, 0, 'x', computer.gameboard.ships[4]);
+  const instruction = document.createElement('div');
+  let current = 0;
+  instruction.textContent = `${player.name}, place your ${player.gameboard.ships[current].name}:`;
+  placeScreen.appendChild(instruction);
+  const axisBtn = document.createElement('button');
+  axisBtn.textContent = 'Axis: X';
+  axisBtn.id = 'x';
+  axisBtn.addEventListener('click', () => {
+    if (axisBtn.id === 'x') {
+      axisBtn.id = 'y';
+      axisBtn.textContent = 'Axis: Y';
+    } else {
+      axisBtn.id = 'x';
+      axisBtn.textContent = 'Axis: X';
+    }
+  });
+  placeScreen.appendChild(axisBtn);
+  const placeBoard = document.createElement('div');
+  placeBoard.id = 'placeboard';
+  placeScreen.appendChild(placeBoard);
   for (let y = 0; y < player.gameboard.board.length; y++) {
     for (let x = 0; x < player.gameboard.board[y].length; x++) {
-      const playerCell = document.createElement('div');
-      playerCell.id = `game${y}${x}`;
-      playerBoard.appendChild(playerCell);
-      const computerCell = document.createElement('div');
-      computerCell.id = `hit${y}${x}`;
-      computerBoard.appendChild(computerCell);
-      //Display the ships on players side
-      if (player.gameboard.board[y][x] !== 0) {
-        playerCell.style.backgroundColor = 'black';
-      }
-      //Display the ships on computers side (TO BE REMOVED!!)
-      if (computer.gameboard.board[y][x] !== 0) {
-        computerCell.style.backgroundColor = 'black';
-      }
-      //Add and event listener to the computers cells that kicks off a turn
-      computerBoard
-        .querySelector(`#hit${y}${x}`)
-        .addEventListener('click', (e) => {
-          if (
-            //Only continue the action if the cell hasn't already been hit, or if the game isn't over
-            e.target.style.backgroundColor !== 'red' &&
-            computer.gameboard.allSunk !== true &&
-            player.gameboard.allSunk !== true
-          ) {
-            //Set the selected cells background to red and call the receive attack and check if sunk to register the attack and check if game over
-            e.target.style.backgroundColor = 'red';
-            computer.gameboard.receiveAttack(y, x);
-            computer.gameboard.checkIfSunk();
-            //Randomly select a square for the computer to attack and ensure it hasn't already been attacked and repeat above sequence
-            let success = false;
-            while (success !== true) {
-              const playerY = Math.floor(Math.random() * 10);
-              const playerX = Math.floor(Math.random() * 10);
-              if (
-                playerBoard.querySelector(`#game${playerY}${playerX}`).style
-                  .backgroundColor !== 'red'
-              ) {
-                playerBoard.querySelector(
-                  `#game${playerY}${playerX}`
-                ).style.backgroundColor = 'red';
-                player.gameboard.receiveAttack(playerY, playerX);
-                player.gameboard.checkIfSunk();
-                success = true;
+      const placeCell = document.createElement('div');
+      placeCell.id = `place${y}${x}`;
+      placeBoard.appendChild(placeCell);
+      placeCell.addEventListener('click', () => {
+        for (let ship of player.gameboard.ships) {
+          if (ship.placed === false) {
+            player.gameboard.placeShip(y, x, axisBtn.id, ship);
+            if (ship.placed === true) {
+              for (let i = 0; i < ship.length; i++) {
+                if (axisBtn.id === 'x') {
+                  const cell = document.querySelector(`#place${y}${x + i}`);
+                  cell.style.backgroundColor = 'black';
+                } else {
+                  const cell = document.querySelector(`#place${y + i}${x}`);
+                  cell.style.backgroundColor = 'black';
+                }
+              }
+              current++;
+              if (current > 4) {
+                document.body.removeChild(placeScreen);
+                const boards = document.createElement('div');
+                boards.id = 'boards';
+                const playerBoard = document.createElement('div');
+                const computerBoard = document.createElement('div');
+                playerBoard.id = 'gameboard';
+                computerBoard.id = 'hitboard';
+                boards.appendChild(playerBoard);
+                boards.appendChild(computerBoard);
+                document.body.appendChild(boards);
+
+                for (let y = 0; y < player.gameboard.board.length; y++) {
+                  for (let x = 0; x < player.gameboard.board[y].length; x++) {
+                    const playerCell = document.createElement('div');
+                    playerCell.id = `game${y}${x}`;
+                    playerBoard.appendChild(playerCell);
+                    const computerCell = document.createElement('div');
+                    computerCell.id = `hit${y}${x}`;
+                    computerBoard.appendChild(computerCell);
+                    //Display the ships on players side
+                    if (player.gameboard.board[y][x] !== 0) {
+                      playerCell.style.backgroundColor = 'black';
+                    }
+                    //Display the ships on computers side (TO BE REMOVED!!)
+                    if (computer.gameboard.board[y][x] !== 0) {
+                      computerCell.style.backgroundColor = 'black';
+                    }
+                    //Add and event listener to the computers cells that kicks off a turn
+                    computerBoard
+                      .querySelector(`#hit${y}${x}`)
+                      .addEventListener('click', (e) => {
+                        if (
+                          //Only continue the action if the cell hasn't already been hit, or if the game isn't over
+                          e.target.style.backgroundColor !== 'red' &&
+                          computer.gameboard.allSunk !== true &&
+                          player.gameboard.allSunk !== true
+                        ) {
+                          //Set the selected cells background to red and call the receive attack and check if sunk to register the attack and check if game over
+                          e.target.style.backgroundColor = 'red';
+                          computer.gameboard.receiveAttack(y, x);
+                          computer.gameboard.checkIfSunk();
+                          //Randomly select a square for the computer to attack and ensure it hasn't already been attacked and repeat above sequence
+                          let success = false;
+                          while (success !== true) {
+                            const playerY = Math.floor(Math.random() * 10);
+                            const playerX = Math.floor(Math.random() * 10);
+                            if (
+                              playerBoard.querySelector(
+                                `#game${playerY}${playerX}`
+                              ).style.backgroundColor !== 'red'
+                            ) {
+                              playerBoard.querySelector(
+                                `#game${playerY}${playerX}`
+                              ).style.backgroundColor = 'red';
+                              player.gameboard.receiveAttack(playerY, playerX);
+                              player.gameboard.checkIfSunk();
+                              success = true;
+                            }
+                          }
+                          if (
+                            computer.gameboard.allSunk === true ||
+                            player.gameboard.allSunk === true
+                          ) {
+                            const body = document.querySelector('body');
+                            body.removeChild(boards);
+                            const winnerText = document.createElement('div');
+                            winnerText.style.fontSize = '40px';
+                            if (computer.gameboard.allSunk === true) {
+                              winnerText.textContent = `${player.name} Wins!`;
+                            } else {
+                              winnerText.textContent = `${computer.name} Wins!`;
+                            }
+                            body.appendChild(winnerText);
+                            const replayBtn = document.createElement('button');
+                            replayBtn.id = 'replayBtn';
+                            replayBtn.textContent = 'Play Again';
+                            replayBtn.addEventListener('click', () => {
+                              body.removeChild(winnerText);
+                              body.removeChild(replayBtn);
+                              body.appendChild(home);
+                            });
+                            body.appendChild(replayBtn);
+                          }
+                        }
+                      });
+                  }
+                }
+              } else {
+                instruction.textContent = `${player.name}, place your ${player.gameboard.ships[current].name}:`;
               }
             }
-            if (computer.gameboard.allSunk === true) {
-              const body = document.querySelector('body');
-              body.removeChild(boards);
-              const winnerText = document.createElement('div');
-              winnerText.style.fontSize = '40px';
-              winnerText.textContent = `${player.name} Wins!`;
-              body.appendChild(winnerText);
-            }
-            if (player.gameboard.allSunk === true) {
-              const body = document.querySelector('body');
-              body.removeChild(boards);
-              const winnerText = document.createElement('div');
-              winnerText.style.fontSize = '40px';
-              winnerText.textContent = `${computer.name} Wins!`;
-              body.appendChild(winnerText);
-            }
+            console.log(player.gameboard.board);
+            break;
           }
-        });
+        }
+      });
     }
   }
+  document.body.appendChild(placeScreen);
+  document.body.removeChild(home);
 });
-
-//Create the boards and populate them with ship coordinates

@@ -1,5 +1,5 @@
 import { Ship } from '../src/ship.js';
-
+//Create allPlaced function
 export class Gameboard {
   constructor() {
     //10x10 board for playing battleship
@@ -29,11 +29,11 @@ export class Gameboard {
     ];
     //Array to hold ship objects
     this.ships = [
-      new Ship('carrier', 5),
-      new Ship('battleship', 4),
-      new Ship('cruiser', 3),
-      new Ship('submarine', 3),
-      new Ship('destroyer', 2),
+      new Ship('Carrier', 5),
+      new Ship('Battleship', 4),
+      new Ship('Cruiser', 3),
+      new Ship('Submarine', 3),
+      new Ship('Destroyer', 2),
     ];
     //Check if all the ships are sunk
     this.allSunk = false;
