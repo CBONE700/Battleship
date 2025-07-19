@@ -51,6 +51,8 @@ export class Gameboard {
           if (this.board[y][x + i] !== 0) {
             return;
           }
+        }
+        for (let i = 0; i < ship.length; i++) {
           this.board[y][x + i] = ship.name;
         }
       } else if (direction === 'y') {
@@ -61,6 +63,8 @@ export class Gameboard {
           if (this.board[y + i][x] !== 0) {
             return;
           }
+        }
+        for (let i = 0; i < ship.length; i++) {
           this.board[y + i][x] = ship.name;
         }
       }
@@ -68,7 +72,6 @@ export class Gameboard {
       ship.placed = true;
     }
   }
-  //Going to need to create some form of loop if someone tries to double hit
   //Function for registering attacks
   receiveAttack(y, x) {
     //Check if the position has been attacked already
@@ -91,10 +94,16 @@ export class Gameboard {
   //Function to check if all ships are sunk
   checkIfSunk() {
     for (let ship of this.ships) {
-      if (ship.sunk == false) {
+      if (ship.sunk === false) {
         return;
       }
     }
     this.allSunk = true;
+  }
+  allPlaced() {
+    for (let ship of this.ships) {
+      if (ship.placed === false) return false;
+    }
+    return true;
   }
 }

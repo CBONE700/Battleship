@@ -4,13 +4,14 @@ import './style.css';
 let player = new Player('Player');
 let computer = new Player('Computer');
 
-//Create home screen that allows you to create a name for the player and then start the game
+//Create Title
 const title = document.createElement('div');
 title.id = 'title';
 title.textContent = 'BATTLESHIP';
 title.style.fontSize = '64px';
 document.body.appendChild(title);
 
+//Create home screen that allows you to create a name for the player and then start the game
 const home = document.createElement('div');
 home.id = 'home';
 const nameTitle = document.createElement('div');
@@ -27,18 +28,29 @@ home.appendChild(name);
 home.appendChild(homeBtn);
 document.body.appendChild(home);
 
+//When game is started, move to screen that allows you to place ships
 homeBtn.addEventListener('click', () => {
   const placeScreen = document.createElement('div');
   placeScreen.id = 'placeScreen';
   document.body.appendChild(placeScreen);
+  //reassign player and computer for replayability
   player = new Player(name.value);
   computer = new Player('Computer');
   //To be randomised
-  computer.gameboard.placeShip(4, 4, 'x', computer.gameboard.ships[0]);
-  computer.gameboard.placeShip(5, 6, 'x', computer.gameboard.ships[1]);
-  computer.gameboard.placeShip(7, 7, 'y', computer.gameboard.ships[2]);
-  computer.gameboard.placeShip(2, 9, 'y', computer.gameboard.ships[3]);
-  computer.gameboard.placeShip(0, 0, 'x', computer.gameboard.ships[4]);
+  let computerShip = 0;
+  while (!computer.gameboard.allPlaced()) {
+    let binary = Math.random() < 0.5 ? 'y' : 'x';
+    if (!computer.gameboard.ships[computerShip].placed) {
+      computer.gameboard.placeShip(
+        Math.floor(Math.random() * 10),
+        Math.floor(Math.random() * 10),
+        binary,
+        computer.gameboard.ships[computerShip]
+      );
+      if (computer.gameboard.ships[computerShip].placed) computerShip++;
+    }
+  }
+  console.log(computer.gameboard.board);
   const instruction = document.createElement('div');
   let current = 0;
   instruction.textContent = `${player.name}, place your ${player.gameboard.ships[current].name}:`;
@@ -64,6 +76,7 @@ homeBtn.addEventListener('click', () => {
       const placeCell = document.createElement('div');
       placeCell.id = `place${y}${x}`;
       placeBoard.appendChild(placeCell);
+      //When a cell is clicked, attempt to place a ship there.
       placeCell.addEventListener('click', () => {
         for (let ship of player.gameboard.ships) {
           if (ship.placed === false) {
@@ -79,7 +92,8 @@ homeBtn.addEventListener('click', () => {
                 }
               }
               current++;
-              if (current > 4) {
+              //If all ships are placed, move to the game screen
+              if (player.gameboard.allPlaced()) {
                 document.body.removeChild(placeScreen);
                 const boards = document.createElement('div');
                 boards.id = 'boards';
@@ -171,7 +185,6 @@ homeBtn.addEventListener('click', () => {
                 instruction.textContent = `${player.name}, place your ${player.gameboard.ships[current].name}:`;
               }
             }
-            console.log(player.gameboard.board);
             break;
           }
         }
